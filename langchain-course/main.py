@@ -3,6 +3,7 @@
 from dotenv import load_dotenv
 from langchain_core.prompts import PromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_ollama import ChatOllama
 
 load_dotenv()
 
@@ -17,7 +18,7 @@ Goku is introduced as an eccentric, monkey-tailed boy who practices martial arts
 As the protagonist of Dragon Ball, Goku appears in most of the episodes, films, television specials and OVAs of the manga's anime adaptations (Dragon Ball, Dragon Ball Z) and sequels (Dragon Ball GT, Dragon Ball Super, Dragon Ball Daima), as well as many of the franchise's video games. Due to the series' international popularity, Goku became one of the most recognizable and iconic manga/anime characters worldwide. Outside the Dragon Ball franchise, Goku has made cameo appearances in Toriyama's self-parody series Neko Majin Z, has been the subject of other parodies, and has appeared in special events. Most Western audiences were introduced to the adult version of Goku featured in the Dragon Ball Z anime, which adapted the final 26 Dragon Ball manga volumes, as opposed to his initial appearance as a child due to the limited success of the first anime series overseas.[3]
 """
     summary_template = """
-    given ther information {information} I want you to create:
+    given there information {information} I want you to create:
     1. A short summary
     2. two instresting fact about them
     """
@@ -25,7 +26,8 @@ As the protagonist of Dragon Ball, Goku appears in most of the episodes, films, 
         input_variables=["information"], template=summary_template
     )
 
-    llm = ChatGoogleGenerativeAI( model="gemini-3.8-flash")
+    llm = ChatGoogleGenerativeAI( model="gemini-3.6-flash")
+    llm_ollama = ChatOllama(model="qwen2.5-coder:7b")
     chain = summary_prompt_template | llm
 
     response = chain.invoke(input={"information": information})
