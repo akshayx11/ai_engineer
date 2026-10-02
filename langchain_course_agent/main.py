@@ -1,5 +1,7 @@
 from dotenv import load_dotenv
 
+from typing import List
+from pydantic import BaseModel, Field
 load_dotenv()
 from langchain.agents import create_agent
 from langchain.tools import tool
@@ -36,10 +38,22 @@ def search_jobs(query: str) -> str:
     return tavily.search(query=query)
     # return "Tokyo weather is sunny"
 
-llm = ChatGoogleGenerativeAI(model="gemini-3.8-flash")
+
+class Source(BaseModel):
+    """Schema for source used by agent"""
+
+    url: str = Field(description="the url of the source")
+
+class AgentResponse(BaseModel):
+    """Schema for agent response with answer and sources"""
+
+    answer: str = Field(description="The agent answers of the query")
+    Source: List = Field(default_factory=list, description="List of sources to generate the answer")
+
+llm = ChatGoogleGenerativeAI(model="gemini-3.6-flash")
 # tools = [search]
 tools = [TavilySearch()]
-agent = create_agent(model=llm, tools=tools)
+agent = create_agent(model=llm, tools=tools, response_format=AgentResponse)
 
 
 def main():
